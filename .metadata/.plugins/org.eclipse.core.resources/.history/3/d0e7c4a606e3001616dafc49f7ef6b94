@@ -1,0 +1,203 @@
+package com.selenium.controls;
+
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+
+
+public class Control {
+	// The name of the control. This value will be used in the generated report.
+    private String descriptiveName;
+
+    // By expression which uniquely identifies the control.
+    private By criterion;
+
+    //The element located on the screen
+    private WebElement _webElement;
+
+
+    /**
+     * Constructor of the base element Control
+     * @param name="descriptiveName">name of the element which will appear in the generated report
+     * @param name="criterion">By expression which uniquely identifies the element in the web page
+     */
+    public Control(String descriptiveName, By criterion)
+    {
+        this.descriptiveName = descriptiveName;
+        this.criterion = criterion;
+    }
+
+    protected void InitWebElement()
+    {
+        WebDriver webDriver = TestContextDriver.GetWebDriver();
+        long timeout = 30;
+
+        // Check whether web driver is initialized
+        if (webDriver != null)
+        {
+            try
+            {
+                WebDriverWait wait = new WebDriverWait(webDriver, timeout);
+        				wait.until(ExpectedConditions.presenceOfElementLocated(criterion));
+            }
+            catch(Exception ex)
+            {
+                System.err.println(ex.getMessage());      
+                Reporter.Info("Control" + this.descriptiveName + ",exception:" + ex.getMessage());
+                TakeScreenShot.ScreenShot();
+                Reporter.Fail("Ooops. Timed out. The element could not be located.");
+            }
+        }
+
+        else
+        {
+        	TakeScreenShot.ScreenShot();
+            Reporter.Fail("WebDriver is NOT initialised. Please verify that your test class extends BaseTestCase.");
+        }
+    }
+
+    public void Click()
+    {
+        InitWebElement();
+        if (_webElement != null)
+        {
+            _webElement.click();
+            Reporter.Info(GetDescriptiveName() + " is clicked");
+        }
+        else
+        {
+        	TakeScreenShot.ScreenShot();
+            Reporter.Fail(GetDescriptiveName() + " is NOT initialized");
+        }
+    }
+
+    public boolean IsEnabled()
+    {
+        InitWebElement();
+        boolean result = false;
+        if (_webElement != null)
+        {
+            result = _webElement.isEnabled();
+            Reporter.Info(GetDescriptiveName() + " is " + (result ? "enabled" : "disabled"));
+        }
+        else
+        {
+            TakeScreenShot.ScreenShot();
+            Reporter.Fail(GetDescriptiveName() + " is NOT initialized");
+        }
+        return result;
+    }
+
+    public boolean IsVisible()
+    {
+        InitWebElement();
+        bool result = false;
+        if (_webElement != null)
+        {
+            result = _webElement.isDisplayed();
+            //Reporter.Info(this.GetDescriptiveName() + " is " + (result ? "visible" : "not visible"));
+        }
+        else
+        {
+            TakeScreenShot.ScreenShot();
+            Reporter.Fail(GetDescriptiveName() + " is NOT initialised");
+        }
+        return result;
+    }
+
+    public void AssertIsVisible()
+    {
+        if (IsVisible())
+        {
+            Reporter.Pass(GetDescriptiveName() + " is visible");
+        }
+        else
+        {
+            TakeScreenShot.ScreenShot();
+            Reporter.Fail(GetDescriptiveName() + " is NOT visible");
+        }
+    }
+
+    public void AssertElementIsNotPresent()
+    {
+        if (TestContextDriver.GetWebDriver().findElements(this.criterion).count == 0)
+        {
+            Reporter.Pass(GetDescriptiveName() + " is NOT present/visible on the page.");
+        }
+        else
+        {
+            if (!IsVisible())
+            {
+                Reporter.Pass(GetDescriptiveName() + " is present on the page BUT it is not visible.");
+            }
+            else
+            {
+                TakeScreenShot.ScreenShot();
+                Reporter.Fail(GetDescriptiveName() + " is displayed on the page.");
+            }
+        }
+    }
+
+   
+    /**
+     * Gets the subclass name. This is used as a test element type. The subclasses are Button, TextBox, etc...
+     * @return
+     */
+    public String GetDescriptiveName()
+    {
+        String controlType = this.GetType().Name;
+        return descriptiveName + " " + controlType;
+    }
+
+    public By GetCriterion()
+    {
+        return criterion;
+    }
+
+  
+    /**
+     * The test element if it is initialized properly
+     * @return
+     */
+    protected WebElement GetWebElement()
+    {
+        if (_webElement != null)
+        {
+            return _webElement;
+        }
+        else
+        {
+            TakeScreenShot.ScreenShot();
+            Reporter.Fail("Test Element is not defined");
+        }
+        return null;
+    }
+
+    public void SendKeys(String input)
+    {
+        InitWebElement();
+        
+        InitWebElement();
+        if (_webElement != null)
+        {
+            _webElement.sendKeys(input);
+            Reporter.Info(GetDescriptiveName() + " the input is entered.");
+        }
+        else
+        {
+            TakeScreenShot.ScreenShot();
+            Reporter.Fail(GetDescriptiveName() + " is NOT initialized");
+        }
+        
+    }
+}
+

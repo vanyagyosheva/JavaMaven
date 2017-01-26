@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.serenity.serenity.steps.serenity.ScoreTwiceCustomerSteps"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.WebDriver"/>
+<fullyQualifiedTypeName name="com.google.common.base.Function"/>
+<fullyQualifiedTypeName name="net.thucydides.core.annotations.Managed"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="com.serenity.serenity.pages.ScoreTwiceLoginPage"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.support.ui.Select"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.WebElement"/>
+<fullyQualifiedTypeName name="com.mobile.serenity.pages.CarsHomePage"/>
+<fullyQualifiedTypeName name="com.mobile.serenity.pages.CarsResultsPage"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+</qualifiedTypeNameHistroy>

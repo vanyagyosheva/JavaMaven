@@ -1,0 +1,66 @@
+package com.selenium.controls;
+import org.junit.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public static class TestContextDriver {
+	
+	 private static WebDriver _webDriver;
+
+	/**  Returns the web driver  */
+	public static WebDriver GetWebDriver()
+    {
+        return _webDriver;
+    }
+	/// <summary>
+    /// Sets the web driver
+    /// </summary>
+    /// <param name="webDriver"></param>
+    public static void SetWebDriver(WebDriver webDriver)
+    {
+        TestContextDriver._webDriver = webDriver;
+    }
+
+    public static String GetPageTitle()
+    {
+        return TestContextDriver._webDriver.Title.Trim();
+    }
+
+    public static void ImplicitlyWait(int seconds)
+    {
+        _webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(seconds));
+    }
+
+    public static void SetPageLoadTimeout(int seconds)
+    {
+        _webDriver.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(seconds));
+    }
+
+    public static void SwitchTo()
+    {
+        _webDriver.SwitchTo().Window(_webDriver.WindowHandles.Last());
+    }
+
+    public static void WaitForElementToBeVisible(string element)
+    {
+        var wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(10));
+        wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.Id(element)));
+    }
+
+    public static void WindowMaximize()
+    {
+        _webDriver.Manage().Window.Maximize();
+    }
+
+    public static void SwitchToFrame(int frame)
+    {
+        GetWebDriver().SwitchTo().Frame(frame);
+    }
+
+    public static void SwitchToDefault()
+    {
+        GetWebDriver().SwitchTo().DefaultContent();
+    }
+
+	}
+

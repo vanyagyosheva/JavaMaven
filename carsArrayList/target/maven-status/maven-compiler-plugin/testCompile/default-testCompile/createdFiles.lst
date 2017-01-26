@@ -1,0 +1,6 @@
+com\mobile\serenity\pages\CarsResultsPage.class
+com\mobile\serenity\CarsTestScenarios.class
+com\mobile\serenity\pages\CarsResultsPage$1.class
+com\mobile\serenity\steps\DefinitionSteps.class
+com\mobile\serenity\pages\CarsHomePage.class
+com\mobile\serenity\steps\serenity\EndUserSteps.class

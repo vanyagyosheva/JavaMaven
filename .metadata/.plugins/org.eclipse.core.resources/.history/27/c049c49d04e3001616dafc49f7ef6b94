@@ -1,0 +1,13 @@
+package com.selenium.controls;
+
+public class TakeScreenShot {
+	public static void ScreenShot()
+    {
+        String pathToFile = RandomNumberGenerator.GenerateRandomNumber();
+
+        Screenshot screenShot = ((ITakesScreenshot)TestContextDriver.GetWebDriver()).GetScreenshot();
+
+        screenShot.SaveAsFile(pathToFile, ImageFormat.Png);
+    }
+}
+

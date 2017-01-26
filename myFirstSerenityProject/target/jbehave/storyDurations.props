@@ -1,0 +1,6 @@
+#org.jbehave.core.embedder.StoryManager
+#Mon Jan 16 14:29:15 EET 2017
+threads=1
+total=101000
+threadAverage=101000
+stories/SW.story=101000

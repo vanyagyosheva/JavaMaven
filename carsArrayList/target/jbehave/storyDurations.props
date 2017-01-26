@@ -1,0 +1,6 @@
+#org.jbehave.core.embedder.StoryManager
+#Tue Jan 17 16:44:52 EET 2017
+threads=1
+total=287000
+threadAverage=287000
+stories/CarsTestScenarios.story=287000

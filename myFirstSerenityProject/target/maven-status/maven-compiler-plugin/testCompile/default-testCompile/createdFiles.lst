@@ -1,0 +1,11 @@
+com\serenity\serenity\steps\serenity\EndUserSteps.class
+com\serenity\serenity\pages\ScoreTwiceProductPage.class
+com\serenity\serenity\steps\serenity\ScoreTwiceCustomerSteps.class
+com\serenity\serenity\SW.class
+com\serenity\serenity\pages\ScoreTwiceHomePage$1.class
+com\serenity\serenity\steps\DefinitionSteps.class
+com\serenity\serenity\pages\DictionaryPage.class
+com\serenity\serenity\steps\ScoreTwiceDefinitionSteps.class
+com\serenity\serenity\pages\ScoreTwiceLoginPage.class
+com\serenity\serenity\pages\ScoreTwiceHomePage.class
+com\serenity\serenity\pages\DictionaryPage$1.class

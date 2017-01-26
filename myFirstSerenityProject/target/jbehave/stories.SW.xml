@@ -1,0 +1,14 @@
+<story path="stories/SW.story" title="Lookup a definition">
+<narrative keyword="Narrative:">
+  <inOrderTo keyword="In order to">bye something</inOrderTo>
+  <asA keyword="As a">n online customer</asA>
+  <iWantTo keyword="I want to">search for online products</iWantTo>
+</narrative>
+<scenario keyword="Scenario:" title="Search for &apos;dress&apos;">
+<step outcome="successful">Given the user is on the ScoreTwice home page</step>
+<step outcome="successful">When user login userEmail = &apos;vania_gyeo6eva@abv.bg&apos;, userPassword = &apos;VanyaGyosheva12&apos;</step>
+<step outcome="successful">Then the user search for  &apos;dress&apos;</step>
+<step outcome="successful">Then they should see all the results &apos;&#1062;&#1045;&#1053;&#1040;&apos;</step>
+<step outcome="successful">Then user should add product</step>
+</scenario>
+</story>

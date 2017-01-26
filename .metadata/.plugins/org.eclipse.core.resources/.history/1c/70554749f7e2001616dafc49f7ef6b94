@@ -1,0 +1,111 @@
+package com.selenium.controls;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+
+//import net.sourceforge.htmlunit.corejs.javascript.tools.shell.Environment;
+
+public class Reporter {
+
+	 Reporter()
+    {
+        if (!Files.Exists(reportDirectory))
+        {
+            Directory.CreateDirectory(reportDirectory);
+        }
+    }
+
+    private static String _fileName;
+
+    private static Stream _writer;
+
+    private static String reportDirectory =  System.getProperty("user.home") + "\\Local Settings\\ApplicationData";
+    
+    private static String _reportDir;
+
+    private static int _errorCount; //***
+
+    private static int _testsCount; //***
+
+
+    public String Timestamp()
+    {
+    	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    	Date date = new Date();
+    	return (dateFormat.format(date.toString()));
+    }
+
+    public static void CreateReportFile()
+    {
+        string dateFormat = (DateTime.Now).ToString("yyyy-MM-dd_HH-mm");
+
+        _fileName = "Report_" + dateFormat + ".html";
+
+        _reportDir = reportDirectory + _fileName;
+
+        _writer = new StreamWriter(_reportDir);
+
+        _writer.WriteLine("<!DOCTYPE html><head><style>body {font-family: Arial, Sans-serif;} .style1{width: 20%; background-color:#99CCFF;} .style2{width: 20%; background-color:#6fdc6f;} .style3{width: 20%; background-color:#ff8080;} .style4{width: 20%; background-color:#feab40;}</style></head><body><table style=\"width:100%\">");
+
+        _errorCount = 0; //***
+        _testsCount = 0; //***
+    }
+
+    public static void Pass(String text)
+    {
+        text = "<td>PASS:</td><td>" + text + "</td>";
+        Write("<tr class=\"style2\"><td>" + Timestamp + "</td>" + text + "</tr>");
+    }
+
+    public static void Info(String text)
+    {
+        text = "<td>I:</td><td>" + text + "</td>";
+        Write("<tr class=\"style1\" ><td>" + Timestamp + "</td>" + text + "</tr>");
+    }
+
+    public static void Fail(String text)
+    {
+        text = "<td>ERROR:</td><td>" + text + "</td>";
+        Write("<tr class=\"style3\"><td>" + Timestamp + "</td>" + text + "</tr>");
+        _errorCount += 1;
+        Assert.IsTrue(false);
+    }
+
+    public static void TestStatistics(int tests, int errors)
+    {
+        int passed = tests - errors;
+        string text = "<td>RESULTS:</td><td>" + "RUN: "+ tests + " PASSED: " + passed +" FAILED: "+ errors +"</td>";
+        Write("<tr class=\"style3\"><td>" + Timestamp + "</td>" + text + "</tr>");
+    }
+
+    public static void StartTest()
+    {
+        var stackFrames = new StackTrace().GetFrames();  // get method calls (frames)
+        StackFrame callingFrame = stackFrames[1];
+        MethodBase method = callingFrame.GetMethod();
+
+        var text = "<td>START:</td><td>" + method.Name + "</td>";
+        Write("<tr class=\"style4\"><td>" + Timestamp + "</td>" + text + "</tr>");
+        _testsCount += 1; //+++
+    }
+
+    public static void Write(string text)
+    {
+        _writer.WriteLine(text);
+    }
+
+    public static void CloseWriter()
+    {
+        Reporter.TestStatistics(_testsCount, _errorCount);
+
+        _writer.Dispose();
+    }
+}

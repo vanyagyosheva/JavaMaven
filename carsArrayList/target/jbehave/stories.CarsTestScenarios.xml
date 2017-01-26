@@ -1,0 +1,12 @@
+<story path="stories/CarsTestScenarios.story" title="Search for car">
+<narrative keyword="Narrative:">
+  <inOrderTo keyword="In order to">by car</inOrderTo>
+  <asA keyword="As a">n English student</asA>
+  <iWantTo keyword="I want to">look up word definitions</iWantTo>
+</narrative>
+<scenario keyword="Scenario:" title="Looking up the new &apos;car&apos;">
+<step outcome="successful">Given the user is on the Cars home page</step>
+<step outcome="successful">When the user looks up for new car with compartment value = &apos;7&apos;, and make value = &apos;8&apos;</step>
+<step outcome="successful">Then the user should see all the cars &apos;Audi Q7 W12 faceli&apos;</step>
+</scenario>
+</story>

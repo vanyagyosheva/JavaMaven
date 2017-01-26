@@ -1,0 +1,24 @@
+package com.selenium.controls;
+
+import java.io.File;
+import java.io.File;
+import java.nio.file.Path;
+//import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+
+import com.sun.jna.platform.FileUtils;
+
+
+public class TakeScreenShot {
+	public static void ScreenShot()
+    {
+        String pathToFile = RandomNumberGenerator.GenerateRandomNumber();
+
+        File screenShot = ((TakesScreenshot)TestContextDriver.GetWebDriver()).getScreenshotAs(OutputType.FILE);
+
+        FileUtils.copyFile(screenShot, new File(pathToFile));
+
+    }
+}
+

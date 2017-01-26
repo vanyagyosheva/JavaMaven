@@ -1,0 +1,325 @@
+/**
+ * dependent libraries:
+ * 
+ * poi-3.14-20160307.jar
+ * poi-ooxml-3.14-20160307.jar
+ * poi-ooxml-schemas-3.14-20160307.jar
+ */
+package com.test.excel;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.ghc.ghTester.expressions.Function;
+
+/**
+ * Reads and excel file and returns the values from a specific column in a
+ * specific sheet as an ArrayList. Works with integer, double, date, string
+ * column values.<br>
+ * <br>
+ * Additional parameters like [{@code bisnessKeyCol}] and [
+ * {@code businessKeyVal}] define specific rows(containing the business key)
+ * from which the values are to be taken - the business key column has to be in
+ * the same sheet as the data column; maximum of 10 columns can be used as
+ * business key. Parameter [{@code numDigits}] define the precision of the
+ * returned values in case of decimal numbers.<br>
+ * <br>
+ * Note: this can be "hacked": input the same name for data and business key
+ * column and data column and specify the value of the key column - this way a
+ * list of specific values would be returned(useful for count of values).
+ * 
+ * @author stamnik, kokogeo
+ *
+ */
+public class WriteToExcel extends Function {
+	private int size;
+	private Vector<Function> params;
+
+	public WriteToExcel() {
+	}
+
+	public WriteToExcel(int size, Vector<Function> params) {
+		this.size = size;
+		this.params = params;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Function create(int size, @SuppressWarnings("rawtypes") Vector params) {
+		return new WriteToExcel(size, params);
+	}
+
+	public Object evaluate(Object data) {
+		ArrayList<String> cellValuesList = new ArrayList<String>();
+
+//		if (size > getMaxParameters() || size < getMinParameters()) {
+//			writeToConsole(data, LOG_ERROR, "Wrong number of parameters! Expected: excelFilepath, "
+//					+ "sheetName, columnName [, businessKeyColumnName, " + "businessKeyValue][, numDigits]");
+//			return null;
+//		}
+
+		try {
+			String excelFilepath = params.get(0).evaluateAsString(data);
+			String sheetName = params.get(1).evaluateAsString(data);
+			String dataColumnName = params.get(2).evaluateAsString(data);
+
+			String[] businessKeyColumnNames = new String[10];
+			String[] businessKeyValues = new String[10];
+			Map<Integer, String> indexToValuesMap = new HashMap<Integer, String>();
+			int numDigits = -1;
+
+			boolean businessKeyFlag = false;
+			boolean decimalPrecisionFlag = false;
+
+			switch (size) {
+			case 4:
+				decimalPrecisionFlag = true;
+				numDigits = Integer.parseInt(params.get(3).evaluateAsString(data));
+				writeToConsole(data, LOG_INFO, "Function \"ColumnValuesToArrayList\" is called with params:");
+				writeToConsole(data, LOG_INFO, "[" + excelFilepath + "], [" + sheetName + "], [" + dataColumnName
+						+ "] and [" + numDigits + "]");
+				break;
+			case 5:
+				businessKeyFlag = true;
+				businessKeyColumnNames = params.get(3).evaluateAsString(data).split("\\|");
+				businessKeyValues = params.get(4).evaluateAsString(data).split("\\|");
+
+				if (businessKeyColumnNames.length != businessKeyValues.length) {
+					writeToConsole(data, LOG_ERROR, "Business key columns and values have different count!");
+					writeToConsole(data, LOG_ERROR, "[" + params.get(3).evaluateAsString(data) + "], ["
+							+ params.get(4).evaluateAsString(data) + "]");
+					return null;
+				}
+
+				writeToConsole(data, LOG_INFO, "Function \"ColumnValuesToArrayList\" is called with params:");
+				writeToConsole(data, LOG_INFO,
+						"[" + excelFilepath + "], [" + sheetName + "], [" + dataColumnName + "], ["
+								+ params.get(3).evaluateAsString(data) + "] and ["
+								+ params.get(4).evaluateAsString(data) + "]");
+				break;
+			case 6:
+				decimalPrecisionFlag = true;
+				businessKeyFlag = true;
+				businessKeyColumnNames = params.get(3).evaluateAsString(data).split("\\|");
+				businessKeyValues = params.get(4).evaluateAsString(data).split("\\|");
+				numDigits = Integer.parseInt(params.get(5).evaluateAsString(data));
+
+				if (businessKeyColumnNames.length != businessKeyValues.length) {
+					writeToConsole(data, LOG_ERROR, "Business key columns and values have different count!");
+					writeToConsole(data, LOG_ERROR, "[" + params.get(3).evaluateAsString(data) + "], ["
+							+ params.get(4).evaluateAsString(data) + "]");
+					return null;
+				}
+
+				writeToConsole(data, LOG_INFO, "Function \"ColumnValuesToArrayList\" is called with params:");
+				writeToConsole(data, LOG_INFO,
+						"[" + excelFilepath + "], [" + sheetName + "], [" + dataColumnName + "], ["
+								+ params.get(3).evaluateAsString(data) + "], [" + params.get(4).evaluateAsString(data)
+								+ "] and [" + numDigits + "]");
+				break;
+			default:
+				writeToConsole(data, LOG_INFO, "Function \"ColumnValuesToArrayList\" is called with params:");
+				writeToConsole(data, LOG_INFO,
+						"[" + excelFilepath + "], [" + sheetName + "] and [" + dataColumnName + "]");
+				break;
+			}
+
+			File file = new File(excelFilepath);
+			FileInputStream fileInStrm = new FileInputStream(file);
+			Workbook wb = new XSSFWorkbook(fileInStrm);
+
+			Sheet theSheet = wb.getSheet(sheetName);
+
+			if (theSheet == null) {
+				wb.close();
+				throw new IllegalArgumentException("Sheet name was not found in excel! - " + sheetName);
+			}
+
+			/*
+			 * working range of the excel document is defined by the max number
+			 * of rows and max number of columns in the 1st row
+			 */
+			// works only on the header - row 1(index 0)
+			int lastCol = theSheet.getRow(0).getLastCellNum();
+			int lastRow = theSheet.getLastRowNum();
+
+			int dataColIndex = -1;
+
+			// find the correct column(s)
+			for (int j = 0; j <= lastCol; j++) {
+
+				Cell cl = theSheet.getRow(0).getCell(j, MissingCellPolicy.RETURN_BLANK_AS_NULL);
+
+				if (cl == null)
+					continue;
+
+				if (cl.getStringCellValue().equals(dataColumnName)) {
+					dataColIndex = cl.getColumnIndex();
+				}
+
+				if (businessKeyFlag) {
+					for (int i = 0; i < businessKeyColumnNames.length; i++) {
+						if (cl.getStringCellValue().equals(businessKeyColumnNames[i])) {
+							indexToValuesMap.put(new Integer(cl.getColumnIndex()), businessKeyValues[i]);
+						}
+					}
+				}
+			}
+
+			if (dataColIndex == -1) {
+				wb.close();
+				throw new IllegalArgumentException("Searched column not found! - " + dataColumnName);
+			}
+
+			// populate the list
+			for (int rowIndex = 1; rowIndex <= lastRow; rowIndex++) {
+
+				Row rw = theSheet.getRow(rowIndex);
+
+				if (rw == null) {
+					if (!businessKeyFlag)
+						cellValuesList.add(null);
+					continue;
+				}
+
+				if (businessKeyFlag) {
+
+					boolean allBkValuesMatch = true;
+					String extractedBkCellValue = "";
+
+					for (Integer key : indexToValuesMap.keySet()) {
+
+						Cell bkCell = rw.getCell(key.intValue(), MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						if (bkCell == null) { // when a cell is empty in its specific way
+							allBkValuesMatch = false;
+							break;
+						}
+
+						int bkCellType = bkCell.getCellType();
+						if (bkCellType == 2) {
+							bkCellType = bkCell.getCachedFormulaResultType();
+						}
+
+						switch (bkCellType) {
+						case Cell.CELL_TYPE_NUMERIC:
+							if (DateUtil.isCellDateFormatted(bkCell)) {
+								extractedBkCellValue = String.valueOf(bkCell.getDateCellValue());
+							} else {
+								// if the decimal separator is needed to be different - use String.format
+								double returnValue = bkCell.getNumericCellValue();
+
+								if ((int) returnValue == returnValue) {
+									extractedBkCellValue = String.valueOf((int) returnValue);
+								} else {
+									if (decimalPrecisionFlag) {
+										extractedBkCellValue = String.valueOf(
+												String.format("%." + numDigits + "f", new Double(returnValue)));
+									} else {
+										extractedBkCellValue = String.valueOf(returnValue);
+									}
+								}
+							}
+							break;
+						case Cell.CELL_TYPE_STRING:
+							extractedBkCellValue = bkCell.getStringCellValue();
+							break;
+						case Cell.CELL_TYPE_BOOLEAN:
+							extractedBkCellValue = String.valueOf(bkCell.getBooleanCellValue()).toUpperCase();
+							break;
+						default:
+							// type of the business key cell is not managed
+							break;
+						}
+
+						// if the business key is not matched with the value
+						// provided, continue to the next row
+						boolean singleValMatch = false;
+
+						for (String singleVal : indexToValuesMap.get(key).split("&"))
+							if (extractedBkCellValue.equals(singleVal)) {
+								singleValMatch |= true;
+							}
+
+						allBkValuesMatch &= singleValMatch;
+
+						if (!allBkValuesMatch)
+							break;
+					}
+
+					if (!allBkValuesMatch)
+						continue;
+				}
+
+				Cell dataCell = rw.getCell(dataColIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
+				if (dataCell == null) { // when a cell is empty in its specific way
+					cellValuesList.add(null);
+					continue;
+				}
+
+				int dataCellType = dataCell.getCellType();
+				if (dataCellType == 2) {
+					dataCellType = dataCell.getCachedFormulaResultType();
+				}
+
+				switch (dataCellType) {
+				case Cell.CELL_TYPE_NUMERIC:
+					if (DateUtil.isCellDateFormatted(dataCell)) {
+						cellValuesList.add(String.valueOf(dataCell.getDateCellValue()));
+					} else {
+						// if the decimal separator is needed to be different - use String.format
+						double returnValue = dataCell.getNumericCellValue();
+
+						if ((int) returnValue == returnValue) {
+							cellValuesList.add(String.valueOf((int) returnValue));
+						} else {
+							if (decimalPrecisionFlag) {
+								cellValuesList.add(
+										String.valueOf(String.format("%." + numDigits + "f", new Double(returnValue))));
+							} else {
+								cellValuesList.add(String.valueOf(returnValue));
+							}
+						}
+					}
+					break;
+				case Cell.CELL_TYPE_STRING:
+					cellValuesList.add(dataCell.getStringCellValue());
+					break;
+				case Cell.CELL_TYPE_BOOLEAN:
+					cellValuesList.add(String.valueOf(dataCell.getBooleanCellValue()).toUpperCase());
+					break;
+				default:
+					// type of the cell is not managed
+					cellValuesList.add(null);
+					break;
+				}
+			}
+
+			wb.close();
+
+		} catch (FileNotFoundException e) {
+			writeToConsole(data, this.LOG_ERROR, "Exception: FileNotFoundException; Message: " + e.getMessage());
+			return null;
+		} catch (IllegalArgumentException e) {
+			writeToConsole(data, this.LOG_ERROR, "Exception: IllegalArgumentException; Message: " + e.getMessage());
+			return null;
+		} catch (IOException e) {
+			writeToConsole(data, this.LOG_ERROR, "Exception: IOException; Message: " + e.getMessage());
+			return null;
+		}
+
+		return cellValuesList;
+	}
+}

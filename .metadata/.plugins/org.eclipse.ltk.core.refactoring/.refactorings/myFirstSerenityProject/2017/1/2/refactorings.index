@@ -1,0 +1,13 @@
+1484206761047	Rename type 'AcceptanceTestSuite'
+1484207852942	Copy file
+1484207860952	Rename resource 'LookupADefinition.story'
+1484207883833	Rename type 'LookupADefinition'
+1484210208007	Rename resource 'update_definition'
+1484211564557	Rename field 'dictionaryPage'
+1484212952377	Rename type 'ScoreTwiceEndUserSteps'
+1484213407227	Rename field 'endUser'
+1484213808316	Rename method 'getDefinitions'
+1484213840972	Rename local variable 'definitionList'
+1484216088463	Rename local variable 'definition'
+1484217151572	Rename resource 'LookupADefinition.story'
+1484301247140	Rename local variable 'email_id'
