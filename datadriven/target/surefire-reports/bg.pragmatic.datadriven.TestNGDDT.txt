@@ -1,0 +1,19 @@
+-------------------------------------------------------------------------------
+Test set: bg.pragmatic.datadriven.TestNGDDT
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 1, Errors: 0, Skipped: 5, Time elapsed: 1.053 sec <<< FAILURE!
+setUp(bg.pragmatic.datadriven.TestNGDDT)  Time elapsed: 0.91 sec  <<< FAILURE!
+java.lang.IllegalStateException: The driver executable does not exist: D:\drivers\geckodriver.exe
+	at com.google.common.base.Preconditions.checkState(Preconditions.java:199)
+	at org.openqa.selenium.remote.service.DriverService.checkExecutable(DriverService.java:121)
+	at org.openqa.selenium.remote.service.DriverService.findExecutable(DriverService.java:116)
+	at org.openqa.selenium.firefox.GeckoDriverService.access$000(GeckoDriverService.java:37)
+	at org.openqa.selenium.firefox.GeckoDriverService$Builder.findDefaultExecutable(GeckoDriverService.java:95)
+	at org.openqa.selenium.remote.service.DriverService$Builder.build(DriverService.java:296)
+	at org.openqa.selenium.firefox.FirefoxDriver.createCommandExecutor(FirefoxDriver.java:277)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:247)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:242)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:238)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:127)
+	at bg.pragmatic.datadriven.TestNGDDT.setUp(TestNGDDT.java:28)
+
