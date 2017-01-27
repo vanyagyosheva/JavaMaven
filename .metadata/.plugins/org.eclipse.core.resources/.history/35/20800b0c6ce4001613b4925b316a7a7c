@@ -1,0 +1,27 @@
+package com.selenium.test.vanya;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.selenium.utilities.WriteToExcel;
+
+public class WebDriverTest {
+
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @Test
+    public void webDriver() throws Exception {
+    	WriteToExcel writer = new WriteToExcel();
+    	writer.writeToExcel();
+
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
+}

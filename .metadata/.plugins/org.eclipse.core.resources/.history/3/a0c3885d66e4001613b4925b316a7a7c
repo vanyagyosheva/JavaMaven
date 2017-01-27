@@ -1,0 +1,16 @@
+package com.selenium.utilities;
+
+public class utility {
+		 
+	      public static final String URL = "http://www.store.demoqa.com";
+	 
+	      public static final String Username = "testuser_1";
+	 
+	      public static final String Password = "Test@123";
+	 
+	      public static final String Path_TestData = "C://Users//vgyosheva//repo//JavaMaven//test-example//src//test//java//com//selenium//utilities";
+	 
+	      public static final String File_TestData = "TestData.xlsx";
+	 
+
+}

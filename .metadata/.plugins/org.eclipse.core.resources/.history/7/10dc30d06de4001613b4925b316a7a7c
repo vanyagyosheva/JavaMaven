@@ -1,0 +1,26 @@
+package com.selenium.pageObjects;
+
+import org.openqa.selenium.*;
+
+import org.openqa.selenium.WebDriver;
+ 
+import org.openqa.selenium.WebElement;
+
+public class LogIn_Page {
+
+	public static Object txtbx_UserName(WebDriver driver) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Object txtbx_Password(WebDriver driver) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Object btn_LogIn(WebDriver driver) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
