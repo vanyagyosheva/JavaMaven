@@ -1,0 +1,5 @@
+bg\pragmatic\datadriven\SimpleDDT.class
+bg\pragmatic\datadriven\CsvTestData.class
+bg\pragmatic\datadriven\ExcelTestData.class
+bg\pragmatic\datadriven\TestNGDDT.class
+bg\pragmatic\datadriven\SpreadsheetData.class
